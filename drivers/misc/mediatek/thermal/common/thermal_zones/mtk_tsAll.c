@@ -66,13 +66,13 @@ struct cooler_data {
 static struct cooler_data g_coolerData[RESERVED_TZS];
 #endif
 
-static int tsallts_debug_log;
+static int tsallts_debug_log = 0;
 
 #define TSALLTS_TEMP_CRIT 120000	/* 120.000 degree Celsius */
 
 #define tsallts_dprintk(fmt, args...)   \
 	do {                                    \
-		if (tsallts_debug_log) {                \
+		if (tsallts_debug_log != 0) {                \
 			pr_debug("[Thermal/TZ/CPUALL]" fmt, ##args);\
 		}                                   \
 	} while (0)
@@ -405,7 +405,7 @@ struct file *file, const char __user *buffer, size_t count,	\
 \
 		g_tsData[(num - 1)].interval = pTempD->time_msec;	\
 \
-		if (tsallts_debug_log) {	\
+		if (tsallts_debug_log != 0) {	\
 			for (i = 0; i < 10; i++) {	\
 				tsallts_printk("Trip_%d_temp=%d ", i,	\
 				g_tsData[(num - 1)].trip_temp[i]);	\
