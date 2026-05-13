@@ -1,4 +1,4 @@
-/*
+7/*
  *  NSA Security-Enhanced Linux (SELinux) security module
  *
  *  This file contains the SELinux hook function implementations.
