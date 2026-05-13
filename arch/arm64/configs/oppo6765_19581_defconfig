@@ -579,6 +579,9 @@ CONFIG_DEATH_HEALER=y
 # ifdef VENDOR_EDIT
 # YiXue.Ge@PSW.BSP.Kernel.Driver,2017/07/03, Add for enable lz4 compress for zram
 CONFIG_CRYPTO_LZ4=y
+CONFIG_CRYPTO_LZ4HC=y
+CONFIG_CRYPTO_LZO=y
+
 # endif
 # ifdef VENDOR_EDIT
 # YiXue.Ge@PSW.BSP.Kernel.Driver,2017/07/03, Add for enable PGTABLE_MAPPING
