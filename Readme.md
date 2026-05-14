@@ -5,15 +5,35 @@ This repository contains a highly optimized kernel source for the Oppo A31 (Proj
 ## 🛠️ Kernel Build Specs: Extreme Performance
 **Architecture:** ARM64 (aarch64-linux-gnu-)
 **Device:** Oppo A31 (MT6765 - oppo6765_19581)
+# Custom Kernel Refactor - SCSI & I/O Optimization
 
-### Performance Locks:
-* **Governor:** Forced `Performance` on all 8 cores.
-* **Scheduling:** EAS disabled to favor raw throughput over battery efficiency.
-* **I/O Boost:** MediaTek I/O Boost enabled for faster asset loading.
-* **Memory:** ZRAM with LZ4 compression enabled for aggressive multitasking.
+This branch contains a refactored approach to kernel logging and I/O scheduling, moving away from aggressive performance locks toward a more streamlined, stable codebase.
 
-### Optimization Note:
-WQ_POWER_EFFICIENT is disabled to ensure background workqueues do not introduce micro-stutter during high CPU load.
+## 🛠 Changes Overview
+
+### SCSI Logging Simplified
+We have replaced the legacy per-CPU spooling mechanism for SCSI logging.
+- **Old Method**: Used a complex bitmask and pre-allocated CPU buffers.
+- **New Method**: Implements atomic dynamic allocation. This reduces the memory footprint and simplifies the logic in `drivers/scsi/scsi_logging.c`.
+
+### I/O Scheduler Tunings (CFQ)
+Optimized the Completely Fair Queuing (CFQ) scheduler for better multitasking:
+- **cfq_quantum**: Doubled to 16.
+- **cfq_back_penalty**: Reduced to 1 to improve performance on fragmented storage.
+
+### Block Layer Overrides
+To reduce unnecessary CPU cycles during high I/O loads, filesystem-level request accounting (`REQ_TYPE_FS`) has been disabled by forcing the I/O stat check to return `false`.
+
+## 📂 File References
+- **`include/scsi/scsi_dbg.h`**: Removed hardcoded buffer definitions (See: 1778734896211.jpeg).
+- **`drivers/scsi/scsi_logging.c`**: Implementation of kmalloc-based buffer management (See: 1778734882145.jpeg).
+- **`block/cfq-iosched.c`**: Adjusted scheduling tunables (See: 1778734818482.jpeg).
+
+## 🚀 How to Build
+1. Sync sources.
+2. Apply the provided commits.
+3. Use your standard `defconfig` and compile via your preferred toolchain (e.g., Clang/GCC via Termux or Crave).
+
 
 
 
