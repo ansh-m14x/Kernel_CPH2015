@@ -2,26 +2,26 @@
 
 This repository contains a highly optimized kernel source for the Oppo A31 (Project: `oppo6765_19581`), based on Linux version 4.9.117. The configuration has been specifically tuned to extract maximum performance from the Helio P35 while maintaining system efficiency.
 
-## 🚀 Key Optimizations & Advantages
+## ⚡ Advanced Scheduler Tuning (Gaming & Response)
 
-### 1. Advanced Scheduler & CPU Performance
-*   **WALT Scheduler (`CONFIG_SCHED_WALT=y`)**: Replaces the standard PELT load tracking with Window-Assisted Load Tracking. This allows the kernel to respond more aggressively to sudden bursts in CPU demand, reducing frame drops in heavy games like PUBG or Free Fire.
-*   **Energy Aware Scheduling (`CONFIG_DEFAULT_USE_ENERGY_AWARE=y`)**: Optimizes task placement across the Helio P35's octa-core architecture to ensure performance is delivered without unnecessary battery drain.
-*   **I/O Boost (`CONFIG_MTK_IO_BOOST=y`)**: Speeds up app launch times by temporarily increasing system frequencies during heavy storage read/write operations.
+The Completely Fair Scheduler (CFS) logic has been modified in `kernel/sched/features.h` to prioritize task execution speed and touch responsiveness over standard "fairness" protocols.
 
-### 2. Networking (Gaming & Ping)
-*   **Google BBR (`CONFIG_TCP_CONG_BBR=y`)**: Implements the Bottleneck Bandwidth and RTT congestion control. This is critical for mobile gaming, as it significantly reduces latency (ping) and prevents packet loss on unstable Wi-Fi or LTE connections.
-*   **Advanced Routing**: Enabled `CONFIG_IP_MROUTE_MULTIPLE_TABLES` to ensure better compatibility with modern Android VPNs, custom DNS settings, and tethering.
+### 🚀 Performance Optimizations
+*   **Low-Latency Wakeups**: Disabled `GENTLE_FAIR_SLEEPERS` to allow waking tasks (like game engines and input drivers) to preempt running tasks more aggressively. This significantly reduces input lag.
+*   **Zero-Penalty Task Starts**: Disabled `START_DEBIT`, ensuring new processes and threads are not penalized upon creation, resulting in faster app launches.
+*   **Enhanced Cache Locality**: Enabled `NEXT_BUDDY` to prefer scheduling the task that just woke up, ensuring the CPU works on the data most recently touched.
+*   **High-Precision Execution**: Enabled `HRTICK` (High-Resolution Timers) to allow for micro-second accurate task switching, reducing micro-stutter during high-refresh scenarios.
 
-### 3. Memory Management (ZRAM)
-*   **ZRAM Support (`CONFIG_ZRAM=y`)**: Optimized for the Oppo A31's RAM configurations by compressing idle memory pages into a virtual swap area, allowing for better multi-tasking.
-*   **Fast Booting (`CONFIG_RD_LZ4=y`)**: The ramdisk is compressed using LZ4, the fastest decompression algorithm available, significantly reducing cold boot times.
-*   **Crypto Support**: Includes `CONFIG_CRYPTO_ZSTD=y`, providing the option for ZSTD compression—a superior balance between high RAM compression ratios and low CPU overhead.
+### 🛠 Technical Verification
+After booting, these features can be verified via the following command (requires root):
+`cat /sys/kernel/debug/sched_features`
 
-### 4. System Stability & Lean Build
-*   **Reduced Debug Overhead**: Disabled `CONFIG_DEBUG_INFO` and `CONFIG_CGROUP_DEBUG` to strip unnecessary symbols. This results in a smaller kernel image (`Image.gz-dtb`), faster build times, and lower CPU jitter.
-*   **Hardened Security**: Kept `CONFIG_CC_STACKPROTECTOR_STRONG=y` to ensure the kernel remains resistant to buffer overflow attacks without sacrificing performance.
-*   **Preemptive Kernel (`CONFIG_PREEMPT=y`)**: Lowers system latency by allowing higher-priority tasks to interrupt lower-priority kernel code immediately, resulting in a "snappier" UI feel.
+| Feature | State | Impact |
+| :--- | :--- | :--- |
+| `GENTLE_FAIR_SLEEPERS` | **DISABLED** | Faster touch response |
+| `START_DEBIT` | **DISABLED** | Faster app opening |
+| `NEXT_BUDDY` | **ENABLED** | Better CPU data reuse |
+| `HRTICK` | **ENABLED** | Smoother frame times (FPS) |
 
 ## 🛠 Build Information
 *   **Device**: Oppo A31 (CPH2015 / CPH2073 / CPH2081)
