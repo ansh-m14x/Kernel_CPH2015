@@ -9,30 +9,35 @@
 #include <linux/export.h>
 
 /**
- * int_sqrt - rough approximation to sqrt
+ * int_sqrt - computes the integer square root
  * @x: integer of which to calculate the sqrt
  *
- * A very rough approximation to the sqrt() function.
+ * Computes: floor(sqrt(x))
  */
 unsigned long int_sqrt(unsigned long x)
 {
-	unsigned long b, m, y = 0;
+	unsigned long tmp, place, root = 0;
 
 	if (x <= 1)
 		return x;
 
-	m = 1UL << (BITS_PER_LONG - 2);
-	while (m != 0) {
-		b = y + m;
-		y >>= 1;
+	place = 1UL << (BITS_PER_LONG - 2);
 
-		if (x >= b) {
-			x -= b;
-			y += m;
+	/* Fast-forward to the first relevant bit */
+	while (place > x)
+		place >>= 2;
+
+	do {
+		tmp = root + place;
+		root >>= 1;
+
+		if (x >= tmp) {
+			x -= tmp;
+			root += place;
 		}
-		m >>= 2;
-	}
+		place >>= 2;
+	} while (place != 0);
 
-	return y;
+	return root;
 }
 EXPORT_SYMBOL(int_sqrt);
