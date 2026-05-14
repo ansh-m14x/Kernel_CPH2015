@@ -35,7 +35,9 @@ Confirm the presence of the logging level control file:
 Confirm active parameters on the primary storage node:
 ```bash
 su -c "grep . /sys/block/mmcblk0/queue/iosched/quantum /sys/block/mmcblk0/queue/iosched/back_seek_penalty"
-
+​🛠 Recent Changes
+​1. Task Scheduler: RT Throttling Removal
+​To ensure maximum performance for high-priority system tasks and gaming, the Real-Time (RT) throttling logic has been removed from the scheduler.
 
 ## 🚀 How to Build
 1. Sync sources.
