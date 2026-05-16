@@ -94,7 +94,7 @@ struct verbs_txreq *__get_txreq(struct hfi1_ibdev *dev,
 				struct rvt_qp *qp)
 	__must_hold(&qp->s_lock)
 {
-	struct verbs_txreq *tx = ERR_PTR(-EBUSY);
+	struct verbs_txreq *tx = NULL;
 
 	write_seqlock(&dev->iowait_lock);
 	if (ib_rvt_state_ops[qp->state] & RVT_PROCESS_RECV_OK) {
