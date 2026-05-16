@@ -82,7 +82,7 @@ static inline struct verbs_txreq *get_txreq(struct hfi1_ibdev *dev,
 	if (unlikely(!tx)) {
 		/* call slow path to get the lock */
 		tx = __get_txreq(dev, qp);
-		if (IS_ERR(tx))
+		if (!tx)
 			return tx;
 	}
 	tx->qp = qp;
