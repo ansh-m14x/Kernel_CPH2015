@@ -1,58 +1,46 @@
-# Custom Kernel for Oppo A31 (MT6765)
+# King Kernel for Oppo A31 (MT6765)
 
-This repository contains a highly optimized kernel source for the Oppo A31 (Project: `oppo6765_19581`), based on Linux version 4.9.117. The configuration has been specifically tuned to extract maximum performance from the Helio P35 while maintaining system efficiency.# Custom Kernel Refactor Project
+This repository contains a highly optimized, custom kernel source for the Oppo A31 (Project: `oppo6765_19581`). It is designed to minimize system overhead, maximize storage throughput, and eliminate aggressive stock performance locks.
 
-This repository contains specialized kernel modifications designed to streamline system overhead and improve storage responsiveness by replacing aggressive performance locks with efficient, logic-based optimizations.
+## 🛠 Core Project Upgrades
 
-## 🛠 Core Modifications
+### 1. Core Upstream Base Bump
+* **Version Update**: Upstreamed the base kernel from Linux version `4.9.117` directly to `4.9.119`.
+* **Impact**: Integrates essential security patches, upstream bug fixes, and critical stability improvements for the overall framework layer.
 
-### 1. SCSI Logging & Buffer Management
-The legacy SCSI logging mechanism has been refactored to reduce memory footprint and prevent potential deadlocks in atomic contexts.
-*   **Refactored Logic**: Removed the complex `scsi_log_buf` structure and per-CPU bitmask management.
-*   **Implementation**: `scsi_log_reserve_buffer` now utilizes a direct `kmalloc` with a fixed **128-byte** length and the `GFP_ATOMIC` flag.
-*   **Cleanup**: Removed the redundant `#define SCSI_LOG_BUFSIZE 128` from `include/scsi/scsi_dbg.h` to rely on localized allocation.
+### 2. Native F2FS Integration
+* **Filesystem Engine**: Implemented full, high-performance **F2FS (Flash-Friendly File System)** drivers.
+* **Optimization**: Specifically structured to accelerate user partition read/write capabilities, optimize gaming block execution, and reduce application initialization latency. 
+* *Note for Developers: Ensure your vendor/recovery fstab structures utilize proper multi-line layout mappings to handle dynamic block mounting safely.*
 
-### 2. Block Layer & I/O Scheduling (CFQ)
-Optimizations were applied to the Completely Fair Queuing (CFQ) scheduler to enhance multitasking and random-access performance.
-*   **`cfq_quantum`**: Increased from **8 to 16** to allow a higher number of simultaneous requests to the storage controller.
-*   **`cfq_back_seek_penalty`**: Reduced from **2 to 1** to improve responsiveness during random-access patterns.
-*   **I/O Accounting Override**: To reduce CPU overhead, filesystem-level request accounting (`REQ_TYPE_FS`) has been disabled by forcing the check to return `false`.
+### 3. SCSI Logging & Buffer Management Refactor
+* **Refactored Logic**: Removed the complex `scsi_log_buf` structure and per-CPU bitmask management.
+* **Implementation**: `scsi_log_reserve_buffer` now utilizes a direct `kmalloc` with a fixed **128-byte** length and the `GFP_ATOMIC` flag to prevent potential deadlocks in atomic contexts.
+* **Cleanup**: Removed the redundant `#define SCSI_LOG_BUFSIZE 128` from `include/scsi/scsi_dbg.h` to rely entirely on localized allocation.
 
-### 3. Optimized Integer Square Root (`int_sqrt.c`)
-The `int_sqrt` function was updated with a bit-skipping optimization to improve mathematical throughput.
-*   **Fast-Forward Logic**: Added a loop to skip bits larger than the input value before starting the main calculation.
-*   **Efficiency**: Significantly reduces iteration counts for smaller inputs while maintaining `floor(sqrt(x))` accuracy.
-*   **Stability**: Removed the `inline` keyword to ensure proper symbol exportation via `EXPORT_SYMBOL`.
+### 4. Block Layer & I/O Scheduling (CFQ Tuning)
+Optimizations were applied to the Completely Fair Queuing (CFQ) scheduler to enhance multitasking and random-access performance on eMMC hardware:
+* **`cfq_quantum`**: Increased from **8 to 16** to allow a higher number of simultaneous requests to the storage controller.
+* **`cfq_back_seek_penalty`**: Reduced from **2 to 1** to drastically improve responsiveness during random-access patterns.
+* **I/O Accounting Override**: Bypassed filesystem-level request accounting (`REQ_TYPE_FS`) by forcing the check to return `false`, freeing up valuable CPU cycles.
+
+### 5. Optimized Integer Square Root (`int_sqrt.c`)
+* **Fast-Forward Logic**: Added a specialized bit-skipping loop to skip bits larger than the input value before starting the main calculation loop.
+* **Efficiency**: Significantly reduces total iteration counts for smaller inputs while maintaining absolute `floor(sqrt(x))` accuracy.
+* **Stability**: Removed the `inline` keyword to ensure proper symbol exportation via `EXPORT_SYMBOL`.
+
+### 6. Task Scheduler Real-Time Boost
+* **RT Throttling Removal**: To ensure unrestricted performance allocation for high-priority system tasks and heavy mobile gaming, the Real-Time (RT) throttling logic has been completely stripped out of the scheduler.
+
+---
 
 ## 🔍 Verification & Path Discovery
-The following paths have been verified on the target device (See: f5505f01-c320-41ea-95a6-de93b1741bb5 and de9b6390-afbf-4043-b848-8cab86d85d13):
 
-### SCSI Logging Level
-Confirm the presence of the logging level control file:
-- **Path**: `/proc/sys/dev/scsi/logging_level`
+### SCSI Logging Level Control
+Confirm the presence of the active logging level control file node:
+* **Path**: `/proc/sys/dev/scsi/logging_level`
 
 ### I/O Scheduler Tunables (eMMC)
-Confirm active parameters on the primary storage node:
+Confirm active parameters on the primary storage node via an elevated terminal emulator or ADB shell:
 ```bash
 su -c "grep . /sys/block/mmcblk0/queue/iosched/quantum /sys/block/mmcblk0/queue/iosched/back_seek_penalty"
-​🛠 Recent Changes
-​1. Task Scheduler: RT Throttling Removal
-​To ensure maximum performance for high-priority system tasks and gaming, the Real-Time (RT) throttling logic has been removed from the scheduler.
-
-## 🚀 How to Build
-1. Sync sources.
-2. Apply the provided commits.
-3. Use your standard `defconfig` and compile via your preferred toolchain (e.g., Clang/GCC via Termux or Crave).
-
-
-
-
-## 🛠 Build Information
-*   **Device**: Oppo A31 (CPH2015 / CPH2073 / CPH2081)
-*   **Architecture**: ARM64
-*   **Cross-Compiler**: `aarch64-linux-gnu-`
-*   **Target Project**: `oppo6765_19581`
-*   **Display Resolution**: 720x1600 (HD+)
-
-## ⚠️ Disclaimer
-This kernel is intended for technical users and custom ROM developers. Modification of kernel parameters can lead to system instability if not handled correctly. Always ensure you have a backup of your stock `boot.img` before flashing.
