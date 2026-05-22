@@ -44,6 +44,11 @@ bat_gm30: battery{
 	g_FG_PSEUDO100_T4 = <(90)>;	/*	Pseudo 100% percentage at T4.*/
 	ACTIVE_TABLE = <(0)>;
 	MULTI_BATTERY = <(0)>;
+        battery1_profile_t0_col = <3>;
+        battery1_profile_t1_col = <3>;
+        battery1_profile_t2_col = <3>;
+        battery1_profile_t3_col = <3>;
+        battery1_profile_t4_col = <3>;
 	/*	System shut down voltage.*/
 	Q_MAX_SYS_VOLTAGE_BAT0 = <(3350)>;
 	/*	System shut down voltage.*/
