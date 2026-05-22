@@ -809,4 +809,5 @@ source "drivers/misc/cxl/Kconfig"
 source "drivers/misc/mediatek/Kconfig"
 source "drivers/misc/oppo_motor/Kconfig"
 source "drivers/misc/hqdevinfo/Kconfig"
+source "drivers/misc/kprofiles/Kconfig"
 endmenu
