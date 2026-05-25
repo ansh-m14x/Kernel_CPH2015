@@ -80,6 +80,9 @@ obj-$(CONFIG_MTK_CAM_CAL) += cam_cal/src/
 ifneq ($(wildcard $(srctree)/drivers/misc/mediatek/met_drv/),)
 obj-y += met_drv/
 endif
+ifneq ($(wildcard $(srctree)/drivers/misc/mediatek/met_api/),)
+obj-y += met_api/
+endif
 ifneq ($(wildcard $(srctree)/drivers/misc/mediatek/met/),)
 obj-y += met/
 endif
