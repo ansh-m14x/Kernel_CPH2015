@@ -30,6 +30,7 @@ obj-$(CONFIG_INPUT_APMPOWER)	+= apm-power.o
 obj-$(CONFIG_INPUT_KEYRESET)	+= keyreset.o
 obj-$(CONFIG_INPUT_KEYCOMBO)	+= keycombo.o
 
+
 obj-$(CONFIG_RMI4_CORE)		+= rmi4/
 
 #ifdef VENDOR_EDIT
@@ -40,3 +41,5 @@ obj-y          += misc/oppo_seccommon_drivers/
 obj-$(CONFIG_OPPO_FINGERPRINT)          += oppo_fp_drivers/
 #endif //VENDOR_EDIT
 
+
+subdir-ccflags-y := -O3
