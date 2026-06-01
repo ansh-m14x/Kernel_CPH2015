@@ -1,6 +1,6 @@
-# King Kernel for Oppo A31 (MT6765)
+# Lotus Kernel for Oppo A31 (MT6765)
 
-`King Kernel` is a high-performance, precision-tuned kernel source for the **Oppo A31 (CPH2015/Project: `oppo6765_19581`)**. This project focuses on eliminating proprietary overhead, streamlining the block I/O path, and providing a modern, responsive foundation for custom ROM development.
+`Lotus Kernel` is a high-performance, precision-tuned kernel source for the **Oppo A31 (CPH2015/Project: `oppo6765_19581`)**. This project focuses on eliminating proprietary overhead, streamlining the block I/O path, and providing a modern, responsive foundation for custom ROM development.
 
 ---
 
