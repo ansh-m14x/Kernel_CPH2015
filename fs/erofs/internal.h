@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 /*
  * Copyright (C) 2017-2018 HUAWEI, Inc.
- *             https://www.huawei.com/
+ * https://www.huawei.com/
  */
 #ifndef __EROFS_INTERNAL_H
 #define __EROFS_INTERNAL_H
@@ -158,8 +158,10 @@ static inline void erofs_workgroup_unfreeze(struct erofs_workgroup *grp,
 
 static inline int erofs_wait_on_workgroup_freezed(struct erofs_workgroup *grp)
 {
-	return atomic_cond_read_relaxed(&grp->refcount,
-					VAL != EROFS_LOCKED_MAGIC);
+	int v;
+	while ((v = atomic_read(&grp->refcount)) == EROFS_LOCKED_MAGIC)
+		cpu_relax();
+	return v;
 }
 #else
 static inline bool erofs_workgroup_try_to_freeze(struct erofs_workgroup *grp,
@@ -299,28 +301,6 @@ extern const struct address_space_operations z_erofs_aops;
 
 /*
  * Logical to physical block mapping
- *
- * Different with other file systems, it is used for 2 access modes:
- *
- * 1) RAW access mode:
- *
- * Users pass a valid (m_lblk, m_lofs -- usually 0) pair,
- * and get the valid m_pblk, m_pofs and the longest m_len(in bytes).
- *
- * Note that m_lblk in the RAW access mode refers to the number of
- * the compressed ondisk block rather than the uncompressed
- * in-memory block for the compressed file.
- *
- * m_pofs equals to m_lofs except for the inline data page.
- *
- * 2) Normal access mode:
- *
- * If the inode is not compressed, it has no difference with
- * the RAW access mode. However, if the inode is compressed,
- * users should pass a valid (m_lblk, m_lofs) pair, and get
- * the needed m_pblk, m_pofs, m_len to get the compressed data
- * and the updated m_lblk, m_lofs which indicates the start
- * of the corresponding uncompressed data in the file.
  */
 enum {
 	BH_Zipped = BH_PrivateStart,
